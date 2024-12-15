@@ -8,8 +8,14 @@ import 'package:sqlite_offline/domain/use_cases/task/get_task_use_case.dart';
 import 'package:sqlite_offline/domain/use_cases/task/update_task_use_case.dart';
 import 'package:sqlite_offline/ui/home/view_models/task/task_view_model.dart';
 
+import '../data/services/local_database_service.dart';
+
 List<SingleChildWidget> get providersLocal {
   return [
+    Provider<LocalDatabaseService>(
+      lazy: true,
+      create: (context) => LocalDatabaseService(),
+    ),
     Provider<TaskRepository>(
       create: (context) => MockTaskRepository(),
     ),

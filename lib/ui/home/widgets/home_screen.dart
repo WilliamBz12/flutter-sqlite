@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sqlite_offline/data/services/local_database_service.dart';
 import 'package:sqlite_offline/domain/models/task/task.dart';
 import 'package:sqlite_offline/ui/home/widgets/header_widget.dart';
 
@@ -153,14 +154,24 @@ class _HomeScreenState extends State<HomeScreen> {
     listen: true,
   );
 
+  late final LocalDatabaseService _databaseService;
+
   @override
   void initState() {
     super.initState();
+    _databaseService =
+        Provider.of<LocalDatabaseService>(context, listen: false);
+    _initializeDatabase();
     Future.microtask(
       () {
         taskViewModel.loadTasks();
       },
     );
+  }
+
+  Future<void> _initializeDatabase() async {
+    await _databaseService.init();
+    print('Banco de dados inicializado!');
   }
 
   @override
