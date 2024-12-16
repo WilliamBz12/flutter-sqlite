@@ -20,7 +20,8 @@ class LocalTaskRepository implements TaskRepository {
 
   @override
   Future<List<Task>> getTasks() async {
-    return [];
+    final data = await databaseService.getTasks();
+    return data;
   }
 
   @override

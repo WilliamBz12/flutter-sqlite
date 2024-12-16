@@ -35,4 +35,9 @@ class LocalDatabaseService {
     print('Tarefa adicionada: $id');
     return id;
   }
+
+  Future<List<Task>> getTasks() async {
+    final List<Map<String, dynamic>> maps = await _database.query('tasks');
+    return List.generate(maps.length, (i) => Task.fromMap(maps[i]));
+  }
 }

@@ -162,16 +162,12 @@ class _HomeScreenState extends State<HomeScreen> {
     _databaseService =
         Provider.of<LocalDatabaseService>(context, listen: false);
     _initializeDatabase();
-    Future.microtask(
-      () {
-        taskViewModel.loadTasks();
-      },
-    );
   }
 
   Future<void> _initializeDatabase() async {
     await _databaseService.init();
     print('Banco de dados inicializado!');
+    taskViewModel.loadTasks();
   }
 
   @override
