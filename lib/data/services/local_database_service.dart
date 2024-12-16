@@ -1,6 +1,8 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../../domain/models/task/task.dart';
+
 class LocalDatabaseService {
   late final Database _database;
 
@@ -27,4 +29,10 @@ class LocalDatabaseService {
   }
 
   Database get database => _database;
+
+  Future<int> addTask(Task task) async {
+    final id = await _database.insert('tasks', task.toMap());
+    print('Tarefa adicionada: $id');
+    return id;
+  }
 }

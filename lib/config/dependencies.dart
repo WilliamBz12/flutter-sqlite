@@ -1,6 +1,5 @@
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
-import 'package:sqlite_offline/data/repositories/mock_task_repository.dart';
 import 'package:sqlite_offline/data/repositories/task_repository.dart';
 import 'package:sqlite_offline/domain/use_cases/task/add_task_use_case.dart';
 import 'package:sqlite_offline/domain/use_cases/task/delete_task_use_case.dart';
@@ -8,6 +7,7 @@ import 'package:sqlite_offline/domain/use_cases/task/get_task_use_case.dart';
 import 'package:sqlite_offline/domain/use_cases/task/update_task_use_case.dart';
 import 'package:sqlite_offline/ui/home/view_models/task/task_view_model.dart';
 
+import '../data/repositories/local_task_repository.dart';
 import '../data/services/local_database_service.dart';
 
 List<SingleChildWidget> get providersLocal {
@@ -17,7 +17,9 @@ List<SingleChildWidget> get providersLocal {
       create: (context) => LocalDatabaseService(),
     ),
     Provider<TaskRepository>(
-      create: (context) => MockTaskRepository(),
+      create: (context) => LocalTaskRepository(
+        databaseService: context.read(),
+      ),
     ),
     Provider<AddTaskUseCase>(
       lazy: true,
