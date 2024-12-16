@@ -72,4 +72,14 @@ class LocalDatabaseService {
 
     return true;
   }
+
+  Future<bool> deleteTask(int id) async {
+    await _database.delete(
+      'tasks',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    print('Tarefa excluída: $id');
+    return true;
+  }
 }
