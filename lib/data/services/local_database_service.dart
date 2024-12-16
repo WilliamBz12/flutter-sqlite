@@ -7,13 +7,16 @@ import '../../domain/models/task/task.dart';
 class LocalDatabaseService {
   late final Database _database;
 
-  Future<void> init() async {
-    final databasePath = await getDatabasesPath();
-    final path = join(databasePath, 'tasks.db');
+  Future<void> init({
+    bool inMemory = false,
+  }) async {
+    final path = inMemory
+        ? inMemoryDatabasePath
+        : join(await getDatabasesPath(), 'tasks.db');
 
     _database = await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: (db, version) {
         db.execute('''
           CREATE TABLE tasks (
@@ -25,15 +28,23 @@ class LocalDatabaseService {
           )
         ''');
         print('Tabela criada: tasks');
-      },
-      onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 2) {
-          await db.execute(
-              'ALTER TABLE tasks ADD COLUMN priority INTEGER DEFAULT 0');
-          print('Coluna adicionada: priority');
+
+        if (inMemory) {
+          onUpgrade(db, version - 1, version);
         }
-        if (oldVersion < 3) {
-          await db.execute('''
+      },
+      onUpgrade: onUpgrade,
+    );
+  }
+
+  Future<void> onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (newVersion > 1) {
+      await db
+          .execute('ALTER TABLE tasks ADD COLUMN priority INTEGER DEFAULT 0');
+      print('Coluna adicionada: priority');
+    }
+    if (newVersion > 2) {
+      await db.execute('''
       CREATE TABLE task_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         task_id INTEGER NOT NULL,
@@ -42,14 +53,9 @@ class LocalDatabaseService {
         FOREIGN KEY(task_id) REFERENCES tasks(id)
       )
     ''');
-          print('Tabela criada: task_logs');
-        }
-        print('Atualizando banco da versão $oldVersion para $newVersion');
-      },
-      onDowngrade: (db, oldVersion, newVersion) async {
-        print('Revertendo banco da versão $oldVersion para $newVersion');
-      },
-    );
+      print('Tabela criada: task_logs');
+    }
+    print('Atualizando banco da versão $oldVersion para $newVersion');
   }
 
   Database get database => _database;
