@@ -112,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 16.0),
                 TextFormField(
-                  controller: titleController,
+                  controller: priorityController,
                   decoration: const InputDecoration(
                     labelText: 'Prioridade',
                     border: OutlineInputBorder(),

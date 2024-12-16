@@ -111,6 +111,24 @@ class TaskCard extends StatelessWidget {
                     onPressed: onEdit,
                   ),
                   IconButton(
+                    icon: const Icon(Icons.remove_red_eye, color: Colors.grey),
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) => SizedBox(
+                          height: 250,
+                          child: ListView.builder(
+                            itemCount: task.logs?.length,
+                            itemBuilder: (context, index) => ListTile(
+                              title: Text(task.logs![index].action),
+                              subtitle: Text(task.logs![index].timestamp),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
                     onPressed: onDelete,
                   ),

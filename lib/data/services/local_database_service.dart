@@ -1,5 +1,6 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqlite_offline/domain/models/task/task_log.dart';
 
 import '../../domain/models/task/task.dart';
 
@@ -82,12 +83,33 @@ class LocalDatabaseService {
     final whereString =
         whereClauses.isNotEmpty ? whereClauses.join(' AND ') : null;
 
-    final List<Map<String, dynamic>> maps = await _database.query(
+    final List<Map<String, dynamic>> tasksMaps = await _database.query(
       'tasks',
       where: whereString,
       whereArgs: whereArgs.isNotEmpty ? whereArgs : null,
     );
-    return List.generate(maps.length, (i) => Task.fromMap(maps[i]));
+
+    final List<Task> tasks = [];
+    for (final taskMap in tasksMaps) {
+      // Busca os logs associados à tarefa
+      final List<Map<String, dynamic>> logsMaps = await _database.rawQuery(
+        '''
+      SELECT *
+      FROM task_logs
+      WHERE task_id = ?
+      ORDER BY timestamp DESC
+      ''',
+        [taskMap['id']],
+      );
+
+      // Converte os mapas de logs para uma lista de objetos Log
+      final logs = logsMaps.map((logMap) => TaskLog.fromMap(logMap)).toList();
+
+      // Adiciona a tarefa com os logs à lista
+      tasks.add(Task.fromMap(taskMap, logs));
+    }
+
+    return tasks;
   }
 
   Future<bool> updateTask(Task task) async {

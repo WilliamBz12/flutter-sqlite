@@ -1,3 +1,5 @@
+import 'task_log.dart';
+
 class Task {
   final int? id;
   final String title;
@@ -5,6 +7,7 @@ class Task {
   final String category;
   final bool isCompleted;
   final int priority;
+  final List<TaskLog>? logs;
 
   Task({
     this.id,
@@ -13,6 +16,7 @@ class Task {
     required this.category,
     required this.isCompleted,
     required this.priority,
+    this.logs,
   });
 
   Map<String, Object?> toMap() {
@@ -25,7 +29,7 @@ class Task {
     };
   }
 
-  factory Task.fromMap(Map<String, Object?> map) {
+  factory Task.fromMap(Map<String, Object?> map, List<TaskLog> logs) {
     return Task(
       id: map['id'] as int?,
       title: map['title'] as String,
@@ -33,6 +37,7 @@ class Task {
       category: map['category'] as String,
       isCompleted: (map['isCompleted'] as int) == 1,
       priority: map['priority'] as int,
+      logs: logs,
     );
   }
 }
