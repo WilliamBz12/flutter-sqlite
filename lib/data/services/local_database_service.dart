@@ -60,4 +60,16 @@ class LocalDatabaseService {
     );
     return List.generate(maps.length, (i) => Task.fromMap(maps[i]));
   }
+
+  Future<bool> updateTask(Task task) async {
+    await _database.update(
+      'tasks',
+      task.toMap(),
+      where: 'id = ?',
+      whereArgs: [task.id],
+    );
+    print('Tarefa atualizada: ${task.title}');
+
+    return true;
+  }
 }
