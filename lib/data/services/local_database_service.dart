@@ -25,6 +25,12 @@ class LocalDatabaseService {
         ''');
         print('Tabela criada: tasks');
       },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        print('Atualizando banco da versão $oldVersion para $newVersion');
+      },
+      onDowngrade: (db, oldVersion, newVersion) async {
+        print('Revertendo banco da versão $oldVersion para $newVersion');
+      },
     );
   }
 
