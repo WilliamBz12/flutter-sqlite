@@ -11,6 +11,7 @@ class MockTaskRepository implements TaskRepository {
       id: _idCounter++, // Simula o auto incremento do ID
       title: task.title,
       description: task.description,
+      priority: task.priority,
       category: task.category,
       isCompleted: task.isCompleted,
     );

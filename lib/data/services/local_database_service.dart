@@ -12,7 +12,7 @@ class LocalDatabaseService {
 
     _database = await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) {
         db.execute('''
           CREATE TABLE tasks (
@@ -26,6 +26,11 @@ class LocalDatabaseService {
         print('Tabela criada: tasks');
       },
       onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute(
+              'ALTER TABLE tasks ADD COLUMN priority INTEGER DEFAULT 0');
+          print('Coluna adicionada: priority');
+        }
         print('Atualizando banco da versão $oldVersion para $newVersion');
       },
       onDowngrade: (db, oldVersion, newVersion) async {

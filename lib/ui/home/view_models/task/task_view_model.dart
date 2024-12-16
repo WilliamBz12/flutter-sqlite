@@ -37,12 +37,14 @@ class TaskViewModel extends ChangeNotifier {
     String title,
     String description,
     String category,
+    int priority,
   ) async {
     final task = Task(
       title: title,
       description: description,
       category: category,
       isCompleted: false,
+      priority: priority,
     );
     await _addTaskUseCase(task);
     await loadTasks();
@@ -52,6 +54,7 @@ class TaskViewModel extends ChangeNotifier {
     final updatedTask = Task(
       id: task.id,
       title: task.title,
+      priority: task.priority,
       description: task.description,
       category: task.category,
       isCompleted: !task.isCompleted,

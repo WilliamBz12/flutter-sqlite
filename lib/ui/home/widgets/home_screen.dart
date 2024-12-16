@@ -20,7 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> showTaskModal({
     required BuildContext context,
     Task? existingTask, // Caso seja uma edição, a tarefa será passada aqui
-    required void Function(String title, String description, String category)
+    required void Function(
+            String title, String description, String category, int priority)
         onSubmit,
   }) async {
     final formKey = GlobalKey<FormState>();
@@ -30,6 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
         TextEditingController(text: existingTask?.description ?? '');
     final TextEditingController categoryController =
         TextEditingController(text: existingTask?.category ?? '');
+    final TextEditingController priorityController =
+        TextEditingController(text: existingTask?.priority.toString() ?? '');
 
     await showModalBottomSheet(
       context: context,
@@ -108,6 +111,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 const SizedBox(height: 16.0),
+                TextFormField(
+                  controller: titleController,
+                  decoration: const InputDecoration(
+                    labelText: 'Prioridade',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (int.tryParse(value ?? '') == null) {
+                      return 'Por favor, insira um número';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 12.0),
 
                 // Botão de Salvar
                 SizedBox(
@@ -128,6 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           titleController.text,
                           descriptionController.text,
                           categoryController.text,
+                          int.parse(priorityController.text),
                         );
                         Navigator.pop(context);
                       }
@@ -183,8 +201,9 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 showTaskModal(
                   context: context,
-                  onSubmit: (title, description, category) {
-                    taskViewModel.addTask(title, description, category);
+                  onSubmit: (title, description, category, priority) {
+                    taskViewModel.addTask(
+                        title, description, category, priority);
                   },
                 );
               },
@@ -241,12 +260,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       showTaskModal(
                         context: context,
                         existingTask: task,
-                        onSubmit: (title, description, category) {
+                        onSubmit: (title, description, category, priority) {
                           final updatedTask = Task(
                             id: task.id,
                             title: title,
                             description: description,
                             category: category,
+                            priority: priority,
                             isCompleted: task.isCompleted,
                           );
                           taskViewModel.updateTask(updatedTask);
