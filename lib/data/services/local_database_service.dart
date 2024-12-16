@@ -31,6 +31,18 @@ class LocalDatabaseService {
               'ALTER TABLE tasks ADD COLUMN priority INTEGER DEFAULT 0');
           print('Coluna adicionada: priority');
         }
+        if (oldVersion < 3) {
+          await db.execute('''
+      CREATE TABLE task_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        task_id INTEGER NOT NULL,
+        action TEXT NOT NULL,
+        timestamp TEXT NOT NULL,
+        FOREIGN KEY(task_id) REFERENCES tasks(id)
+      )
+    ''');
+          print('Tabela criada: task_logs');
+        }
         print('Atualizando banco da versão $oldVersion para $newVersion');
       },
       onDowngrade: (db, oldVersion, newVersion) async {
@@ -44,6 +56,12 @@ class LocalDatabaseService {
   Future<int> addTask(Task task) async {
     final id = await _database.insert('tasks', task.toMap());
     print('Tarefa adicionada: $id');
+
+    await _database.insert('task_logs', {
+      'task_id': id,
+      'action': 'Criação',
+      'timestamp': DateTime.now().toIso8601String(),
+    });
     return id;
   }
 
@@ -80,7 +98,11 @@ class LocalDatabaseService {
       whereArgs: [task.id],
     );
     print('Tarefa atualizada: ${task.title}');
-
+    await _database.insert('task_logs', {
+      'task_id': task.id,
+      'action': 'Edição',
+      'timestamp': DateTime.now().toIso8601String(),
+    });
     return true;
   }
 
