@@ -36,8 +36,28 @@ class LocalDatabaseService {
     return id;
   }
 
-  Future<List<Task>> getTasks() async {
-    final List<Map<String, dynamic>> maps = await _database.query('tasks');
+  Future<List<Task>> getTasks({String? category, bool? isCompleted}) async {
+    final whereClauses = [];
+    final whereArgs = [];
+
+    if (category != null) {
+      whereClauses.add('category = ?');
+      whereArgs.add(category);
+    }
+
+    if (isCompleted != null) {
+      whereClauses.add('isCompleted = ?');
+      whereArgs.add(isCompleted ? 1 : 0);
+    }
+
+    final whereString =
+        whereClauses.isNotEmpty ? whereClauses.join(' AND ') : null;
+
+    final List<Map<String, dynamic>> maps = await _database.query(
+      'tasks',
+      where: whereString,
+      whereArgs: whereArgs.isNotEmpty ? whereArgs : null,
+    );
     return List.generate(maps.length, (i) => Task.fromMap(maps[i]));
   }
 }

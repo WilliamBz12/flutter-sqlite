@@ -19,8 +19,11 @@ class LocalTaskRepository implements TaskRepository {
   }
 
   @override
-  Future<List<Task>> getTasks() async {
-    final data = await databaseService.getTasks();
+  Future<List<Task>> getTasks({String? category, bool? isCompleted}) async {
+    final data = await databaseService.getTasks(
+      category: category,
+      isCompleted: isCompleted,
+    );
     return data;
   }
 

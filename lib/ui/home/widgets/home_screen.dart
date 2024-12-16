@@ -191,6 +191,32 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
+          SliverToBoxAdapter(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    taskViewModel.loadTasks();
+                  },
+                  child: const Text('Todos'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    taskViewModel.loadTasks(isCompleted: false);
+                  },
+                  child: const Text('Pendentes'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    taskViewModel.loadTasks(isCompleted: true);
+                  },
+                  child: const Text('Concluídos'),
+                ),
+              ],
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 20)),
           if (taskViewModel.tasks == null)
             const SliverToBoxAdapter(
               child: Center(
