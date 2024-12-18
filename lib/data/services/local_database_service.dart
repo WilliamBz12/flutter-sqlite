@@ -14,6 +14,14 @@ class LocalDatabaseService {
       version: 1,
       onCreate: (db, version) {
         debugPrint("Banco de dados criado!");
+        db.execute(""" CREATE TABLE tasks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            description TEXT,
+            category TEXT,
+            isCompleted INTEGER DEFAULT 0
+            )""");
+        debugPrint("TABELA DE TASKS CRIADA!");
       },
     );
   }
