@@ -29,6 +29,7 @@ class LocalTaskRepository implements TaskRepository {
 
   @override
   Future<bool> updateTask(Task task) async {
-    return true;
+    final result = await localDatabaseService.updateTask(task);
+    return result != null;
   }
 }

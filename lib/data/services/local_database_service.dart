@@ -57,4 +57,15 @@ class LocalDatabaseService {
     final tasks = result?.map((e) => Task.fromMap(e)).toList();
     return tasks ?? [];
   }
+
+  Future<int?> updateTask(Task task) async {
+    final result = await _database?.update(
+      'tasks',
+      task.toMap(),
+      where: 'id = ?',
+      whereArgs: [task.id],
+    );
+
+    return result;
+  }
 }

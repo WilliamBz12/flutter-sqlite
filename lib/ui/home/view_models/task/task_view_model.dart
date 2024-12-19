@@ -49,7 +49,10 @@ class TaskViewModel extends ChangeNotifier {
     await loadTasks();
   }
 
-  Future<void> toggleTaskStatus(Task task) async {
+  Future<void> toggleTaskStatus(
+    Task task, {
+    bool? isCompleted,
+  }) async {
     final updatedTask = Task(
       id: task.id,
       title: task.title,
@@ -58,14 +61,15 @@ class TaskViewModel extends ChangeNotifier {
       isCompleted: !task.isCompleted,
     );
     await _updateTaskUseCase(updatedTask);
-    await loadTasks();
+    await loadTasks(isCompleted: isCompleted);
   }
 
   Future<void> updateTask(
-    Task task,
-  ) async {
+    Task task, {
+    bool? isCompleted,
+  }) async {
     await _updateTaskUseCase(task);
-    await loadTasks();
+    await loadTasks(isCompleted: isCompleted);
   }
 
   Future<void> deleteTask(int id) async {
