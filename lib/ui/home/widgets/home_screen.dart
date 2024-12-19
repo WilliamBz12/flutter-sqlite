@@ -165,6 +165,8 @@ class _HomeScreenState extends State<HomeScreen> {
     listen: true,
   );
 
+  bool? filterIsCompleted;
+
   @override
   void initState() {
     super.initState();
@@ -192,6 +194,50 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
+          SliverToBoxAdapter(
+            child: Row(
+              children: [
+                TextButton(
+                  onPressed: () {
+                    if (filterIsCompleted == true) {
+                      filterIsCompleted = null;
+                      taskViewModel.loadTasks();
+                    } else {
+                      filterIsCompleted = true;
+                      taskViewModel.loadTasks(isCompleted: true);
+                    }
+                  },
+                  child: Text(
+                    'Finalizadas',
+                    style: TextStyle(
+                      color: filterIsCompleted == true
+                          ? Colors.amber
+                          : Colors.black,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (filterIsCompleted == false) {
+                      filterIsCompleted = null;
+                      taskViewModel.loadTasks();
+                    } else {
+                      filterIsCompleted = false;
+                      taskViewModel.loadTasks(isCompleted: false);
+                    }
+                  },
+                  child: Text(
+                    'Não finalizadas',
+                    style: TextStyle(
+                      color: filterIsCompleted == false
+                          ? Colors.amber
+                          : Colors.black,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           if (taskViewModel.tasks == null)
             const SliverToBoxAdapter(
               child: Center(
