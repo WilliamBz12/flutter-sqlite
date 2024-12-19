@@ -36,8 +36,24 @@ class LocalDatabaseService {
     return id;
   }
 
-  Future<List<Task>> getTasks() async {
-    final result = await _database?.query('tasks');
+  Future<List<Task>> getTasks({
+    bool? isCompleted,
+  }) async {
+    List<String> where = [];
+    List whereArgs = [];
+
+    if (isCompleted != null) {
+      where.add('isCompleted = ?');
+      whereArgs.add(isCompleted ? 1 : 0);
+    }
+
+    final whereString = where.isNotEmpty ? where.join(' AND ') : null;
+
+    final result = await _database?.query(
+      'tasks',
+      whereArgs: whereArgs,
+      where: whereString,
+    );
     final tasks = result?.map((e) => Task.fromMap(e)).toList();
     return tasks ?? [];
   }
