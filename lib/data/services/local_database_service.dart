@@ -35,4 +35,10 @@ class LocalDatabaseService {
     debugPrint("task criada: $id");
     return id;
   }
+
+  Future<List<Task>> getTasks() async {
+    final result = await _database?.query('tasks');
+    final tasks = result?.map((e) => Task.fromMap(e)).toList();
+    return tasks ?? [];
+  }
 }

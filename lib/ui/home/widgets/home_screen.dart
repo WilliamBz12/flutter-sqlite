@@ -149,13 +149,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void initDatabase() {
+  void initDatabase() async {
     final service = Provider.of<LocalDatabaseService>(
       context,
       listen: false,
     );
 
-    service.init();
+    await service.init();
+
+    taskViewModel.loadTasks();
   }
 
   late final taskViewModel = Provider.of<TaskViewModel>(
@@ -166,11 +168,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(
-      () {
-        taskViewModel.loadTasks();
-      },
-    );
     initDatabase();
   }
 
