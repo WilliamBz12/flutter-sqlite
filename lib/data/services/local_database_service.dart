@@ -31,6 +31,16 @@ class LocalDatabaseService {
           );
           debugPrint("nova coluna adicionada");
         }
+
+        if (oldVersion < 3) {
+          db.execute("""CREATE TABLE responsibles (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    name TEXT NOT NULL
+              )""");
+          db.execute(
+            'ALTER TABLE tasks ADD COLUMN responsibleId INTEGER REFERENCES responsibles(id)',
+          );
+        }
         print("new version: $newVersion");
       },
       onDowngrade: (db, oldVersion, newVersion) {
