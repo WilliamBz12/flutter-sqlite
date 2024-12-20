@@ -24,6 +24,12 @@ class LocalDatabaseService {
             )""");
         debugPrint("TABELA DE TASKS CRIADA!");
       },
+      onUpgrade: (db, oldVersion, newVersion) {
+        print("new version: $newVersion");
+      },
+      onDowngrade: (db, oldVersion, newVersion) {
+        print("newVersion: $newVersion");
+      },
     );
   }
 
