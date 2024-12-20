@@ -16,7 +16,8 @@ class LocalTaskRepository implements TaskRepository {
 
   @override
   Future<bool> deleteTask(int id) async {
-    return true;
+    final result = await localDatabaseService.deleteTask(id);
+    return result != null;
   }
 
   @override

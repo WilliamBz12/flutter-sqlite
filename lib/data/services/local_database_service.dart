@@ -68,4 +68,14 @@ class LocalDatabaseService {
 
     return result;
   }
+
+  Future<int?> deleteTask(int taskId) async {
+    final result = await _database?.delete(
+      'tasks',
+      where: 'id = ?',
+      whereArgs: [taskId],
+    );
+
+    return result;
+  }
 }
