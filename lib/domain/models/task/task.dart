@@ -3,6 +3,7 @@ class Task {
   final String title;
   final String description;
   final String category;
+  final String priority;
   final bool isCompleted;
 
   Task({
@@ -11,6 +12,7 @@ class Task {
     required this.description,
     required this.category,
     required this.isCompleted,
+    required this.priority,
   });
 
   factory Task.fromMap(Map<String, dynamic> data) {
@@ -20,6 +22,7 @@ class Task {
       category: data['category'],
       id: data['id'],
       isCompleted: data['isCompleted'] == 1,
+      priority: data['priority'] ?? '',
     );
   }
 
@@ -29,6 +32,7 @@ class Task {
       'description': description,
       'category': category,
       'isCompleted': isCompleted ? 1 : 0,
+      'priority': priority,
     };
   }
 }

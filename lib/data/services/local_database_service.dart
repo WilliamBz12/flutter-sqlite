@@ -12,7 +12,7 @@ class LocalDatabaseService {
 
     _database = await openDatabase(
       dbPath,
-      version: 1,
+      version: 2,
       onCreate: (db, version) {
         debugPrint("Banco de dados criado!");
         db.execute(""" CREATE TABLE tasks (
@@ -25,6 +25,12 @@ class LocalDatabaseService {
         debugPrint("TABELA DE TASKS CRIADA!");
       },
       onUpgrade: (db, oldVersion, newVersion) {
+        if (oldVersion == 1 && newVersion == 2) {
+          db.execute(
+            'ALTER TABLE tasks ADD COLUMN priority TEXT DEFAULT medio',
+          );
+          debugPrint("nova coluna adicionada");
+        }
         print("new version: $newVersion");
       },
       onDowngrade: (db, oldVersion, newVersion) {

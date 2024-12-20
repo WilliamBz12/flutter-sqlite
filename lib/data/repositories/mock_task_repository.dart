@@ -13,6 +13,7 @@ class MockTaskRepository implements TaskRepository {
       description: task.description,
       category: task.category,
       isCompleted: task.isCompleted,
+      priority: task.priority,
     );
     _mockDb.add(newTask);
     return newTask.id!; // Retorna o ID da nova tarefa
