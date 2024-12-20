@@ -12,7 +12,7 @@ class LocalDatabaseService {
 
     _database = await openDatabase(
       dbPath,
-      version: 2,
+      version: 3,
       onCreate: (db, version) {
         debugPrint("Banco de dados criado!");
         db.execute(""" CREATE TABLE tasks (
@@ -24,7 +24,7 @@ class LocalDatabaseService {
             )""");
         debugPrint("TABELA DE TASKS CRIADA!");
       },
-      onUpgrade: (db, oldVersion, newVersion) {
+      onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion == 1 && newVersion == 2) {
           db.execute(
             'ALTER TABLE tasks ADD COLUMN priority TEXT DEFAULT medio',
@@ -33,7 +33,7 @@ class LocalDatabaseService {
         }
 
         if (oldVersion < 3) {
-          db.execute("""CREATE TABLE responsibles (
+          await db.execute("""CREATE TABLE responsibles (
                     id INTEGER PRIMARY KEY AUTOINCREMENT, 
                     name TEXT NOT NULL
               )""");
@@ -50,9 +50,25 @@ class LocalDatabaseService {
   }
 
   Future<int?> createTask(Task task) async {
+    int? responsibleId;
+    if (task.responsibleName != null) {
+      final responsibles = await _database?.query(
+        'responsibles',
+        where: 'name LIKE ?',
+        whereArgs: [task.responsibleName],
+      );
+
+      if (responsibles != null && responsibles.isNotEmpty) {
+        responsibleId = responsibles.first['id'] as int;
+      } else {
+        responsibleId = await _database?.insert('responsibles', {
+          'name': task.responsibleName,
+        });
+      }
+    }
     final id = await _database?.insert(
       'tasks',
-      task.toMap(),
+      task.toMap(responsibleId: responsibleId),
     );
     debugPrint("task criada: $id");
     return id;

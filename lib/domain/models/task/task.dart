@@ -4,6 +4,7 @@ class Task {
   final String description;
   final String category;
   final String priority;
+  final String? responsibleName;
   final bool isCompleted;
 
   Task({
@@ -13,6 +14,7 @@ class Task {
     required this.category,
     required this.isCompleted,
     required this.priority,
+    this.responsibleName,
   });
 
   factory Task.fromMap(Map<String, dynamic> data) {
@@ -26,13 +28,16 @@ class Task {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({
+    int? responsibleId,
+  }) {
     return {
       'title': title,
       'description': description,
       'category': category,
       'isCompleted': isCompleted ? 1 : 0,
       'priority': priority,
+      'responsibleId': responsibleId,
     };
   }
 }
