@@ -95,4 +95,23 @@ void main() {
       expect(newEditedTask?.title, equals(editedTask.title));
     },
   );
+
+  test(
+    'Deverá apagar um item especifico',
+    () async {
+      final task = Task(
+        title: 'Nova task',
+        description: '',
+        category: 'casa',
+        isCompleted: false,
+        priority: 'alta',
+      );
+      final taskId = await localDatabaseService.createTask(task);
+      final savedTask = await localDatabaseService.getTaskById(taskId!);
+      expect(savedTask?.title, equals(task.title));
+      await localDatabaseService.deleteTask(taskId);
+      final deletedTask = await localDatabaseService.getTaskById(taskId);
+      expect(deletedTask, equals(null));
+    },
+  );
 }
