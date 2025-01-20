@@ -112,7 +112,8 @@ class LocalDatabaseService {
       whereArgs.add(isCompleted ? 1 : 0);
     }
 
-    final whereString = where.isNotEmpty ? where.join(' AND ') : null;
+    final whereString =
+        where.isNotEmpty ? 'WHERE ${where.join(' AND ')}' : null;
 
     final result = await _database?.rawQuery(
       """

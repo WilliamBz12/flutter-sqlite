@@ -36,4 +36,35 @@ void main() {
       expect(result, isNot(equals(null)));
     },
   );
+
+  test(
+    'Deverá listar os itens salvos',
+    () async {
+      final task = Task(
+        title: 'Lavar louça',
+        description: '',
+        category: 'casa',
+        isCompleted: false,
+        priority: 'alta',
+      );
+      await localDatabaseService.createTask(task);
+      final result = await localDatabaseService.getTasks();
+      expect(result.length, equals(2));
+    },
+  );
+  test(
+    'Deverá listar os itens completados',
+    () async {
+      final task = Task(
+        title: 'Varrer a casa',
+        description: '',
+        category: 'casa',
+        isCompleted: true,
+        priority: 'alta',
+      );
+      await localDatabaseService.createTask(task);
+      final result = await localDatabaseService.getTasks(isCompleted: true);
+      expect(result.length, equals(1));
+    },
+  );
 }
