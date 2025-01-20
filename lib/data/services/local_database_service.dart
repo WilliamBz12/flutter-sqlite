@@ -6,9 +6,17 @@ import 'package:sqlite_offline/domain/models/task/task.dart';
 class LocalDatabaseService {
   static Database? _database;
 
-  Future<void> init() async {
-    final path = await getDatabasesPath();
-    final dbPath = join(path, 'tasks.db');
+  Database? get database => _database;
+  Future<void> init({
+    bool inMemoryDatabase = false,
+  }) async {
+    late String dbPath;
+    if (inMemoryDatabase) {
+      dbPath = inMemoryDatabasePath;
+    } else {
+      final path = await getDatabasesPath();
+      dbPath = join(path, 'tasks.db');
+    }
 
     _database = await openDatabase(
       dbPath,
