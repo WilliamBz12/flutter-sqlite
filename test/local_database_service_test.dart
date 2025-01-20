@@ -67,4 +67,32 @@ void main() {
       expect(result.length, equals(1));
     },
   );
+
+  test(
+    'Deverá atualizar uma informação de uma task',
+    () async {
+      final task = Task(
+        title: 'Beber agua',
+        description: '',
+        category: 'Rotina',
+        isCompleted: false,
+        priority: 'alta',
+      );
+      final taskId = await localDatabaseService.createTask(task);
+      final newTask = await localDatabaseService.getTaskById(taskId!);
+      expect(newTask?.title, equals(task.title));
+      final editedTask = Task(
+        id: newTask!.id,
+        title: 'Beber agua 2',
+        description: newTask.description,
+        category: newTask.category,
+        isCompleted: newTask.isCompleted,
+        priority: newTask.priority,
+      );
+      final result = await localDatabaseService.updateTask(editedTask);
+      expect(result, isNot(equals(null)));
+      final newEditedTask = await localDatabaseService.getTaskById(taskId);
+      expect(newEditedTask?.title, equals(editedTask.title));
+    },
+  );
 }

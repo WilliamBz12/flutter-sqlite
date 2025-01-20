@@ -149,4 +149,14 @@ class LocalDatabaseService {
 
     return result;
   }
+
+  Future<Task?> getTaskById(int taskId) async {
+    final result = await _database?.query(
+      'tasks',
+      where: 'id = ?',
+      whereArgs: [taskId],
+    );
+    final tasks = result?.map((e) => Task.fromMap(e)).toList();
+    return tasks?.isNotEmpty ?? false ? tasks?.first : null;
+  }
 }
