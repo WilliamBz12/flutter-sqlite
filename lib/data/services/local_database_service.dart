@@ -13,9 +13,9 @@ class LocalDatabaseService {
     _database = await openDatabase(
       dbPath,
       version: 3,
-      onCreate: (db, version) {
+      onCreate: (db, version) async {
         debugPrint("Banco de dados criado!");
-        db.execute(""" CREATE TABLE tasks (
+        await db.execute(""" CREATE TABLE tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
             description TEXT,
@@ -23,30 +23,49 @@ class LocalDatabaseService {
             isCompleted INTEGER DEFAULT 0
             )""");
         debugPrint("TABELA DE TASKS CRIADA!");
+
+        if (version >= 2) {
+          await addPriorityColumnToTasksTable(db);
+        }
+
+        if (version >= 3) {
+          await createResponsibleTable(db);
+        }
       },
       onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion == 1 && newVersion == 2) {
-          db.execute(
-            'ALTER TABLE tasks ADD COLUMN priority TEXT DEFAULT medio',
-          );
-          debugPrint("nova coluna adicionada");
+        if (oldVersion < 2) {
+          await addPriorityColumnToTasksTable(db);
         }
 
         if (oldVersion < 3) {
-          await db.execute("""CREATE TABLE responsibles (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                    name TEXT NOT NULL
-              )""");
-          db.execute(
-            'ALTER TABLE tasks ADD COLUMN responsibleId INTEGER REFERENCES responsibles(id)',
-          );
+          await createResponsibleTable(db);
         }
-        print("new version: $newVersion");
+        debugPrint("new version: $newVersion");
       },
       onDowngrade: (db, oldVersion, newVersion) {
         print("newVersion: $newVersion");
       },
     );
+  }
+
+  Future<void> addPriorityColumnToTasksTable(Database db) async {
+    await db.execute(
+      'ALTER TABLE tasks ADD COLUMN priority TEXT DEFAULT medio',
+    );
+    debugPrint("nova coluna adicionada");
+  }
+
+  Future<void> createResponsibleTable(Database db) async {
+    await db.execute("""CREATE TABLE responsibles (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    name TEXT NOT NULL
+              )""");
+    debugPrint("tabela de responsible criada");
+
+    await db.execute(
+      'ALTER TABLE tasks ADD COLUMN responsibleId INTEGER REFERENCES responsibles(id)',
+    );
+    debugPrint("vinculo por coluna adicionado");
   }
 
   Future<int?> createTask(Task task) async {
