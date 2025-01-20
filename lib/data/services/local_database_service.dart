@@ -87,10 +87,15 @@ class LocalDatabaseService {
 
     final whereString = where.isNotEmpty ? where.join(' AND ') : null;
 
-    final result = await _database?.query(
-      'tasks',
-      whereArgs: whereArgs,
-      where: whereString,
+    final result = await _database?.rawQuery(
+      """
+    SELECT tasks.*, responsibles.name
+    FROM tasks
+    LEFT JOIN responsibles
+    ON tasks.responsibleId = responsibles.id 
+    ${whereString ?? ''}
+""",
+      whereArgs,
     );
     final tasks = result?.map((e) => Task.fromMap(e)).toList();
     return tasks ?? [];

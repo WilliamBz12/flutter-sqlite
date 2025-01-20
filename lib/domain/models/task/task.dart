@@ -25,6 +25,7 @@ class Task {
       id: data['id'],
       isCompleted: data['isCompleted'] == 1,
       priority: data['priority'] ?? '',
+      responsibleName: data['name'],
     );
   }
 
